@@ -1,0 +1,20 @@
+{
+  "name": "youtube_clone",
+  "version": "1.0.0",
+  "description": "A fully backend Server",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "Javascript",
+    "MERN",
+    "Backend"
+  ],
+  "author": "Pinkee Singh",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
