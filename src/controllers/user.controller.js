@@ -3,6 +3,8 @@ import { ApiError } from "../utils/ApiError.js";
 import {User} from "../models/user.models.js"
 import { uploadOnCloudinary } from "../utils/cloudnary.js";
 import { ApiResponse } from "../utils/ApiRespose.js";
+import fs from "fs";
+
 
 const registerUser = asyncHandler( async(req, res) => {
     // get user detail from frontend
@@ -27,30 +29,35 @@ const registerUser = asyncHandler( async(req, res) => {
         throw new ApiError(400, "All fields are required");
     }
 
-    const existedUser =  User.findOne({$or: [{username}, {email}]});
+    const existedUser = await User.findOne({$or: [{username}, {email}]});
     if(existedUser)
     {
         throw new ApiError(409, "User with email or username is already exist ");
     }
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverLocalPath = req.files?.coverImage[0]?.path;
+    const coverLocalPath = req.files?.coverimage[0]?.path;
+    console.log(`profile photo   ${avatarLocalPath}`)
     if(!avatarLocalPath)
     {
         throw new ApiError(400, "Avatar file is required");
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = await uploadOnCloudinary(coverLocalPath);
+    const coverimage = await uploadOnCloudinary(coverLocalPath);
+    //console.log(avatar);
     if(!avatar)
     {
         throw new ApiError(400, "Avatar file is required");
     }
 
+    fs.unlinkSync(avatarLocalPath);
+    fs.unlinkSync(coverLocalPath);
+
     const user = await User.create({
         fullname,
         avatar: avatar.url,
-        coverImage: coverImage?.url || "",
+        coverimage: coverimage?.url || "",
         email,
         username: username.toLowerCase(),
         password
